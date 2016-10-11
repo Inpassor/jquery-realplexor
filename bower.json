@@ -1,0 +1,20 @@
+{
+    "name": "jquery-realplexor",
+    "description": "Realplexor client-side library",
+    "main": [
+        "./js/jquery-realplexor.js"
+    ],
+    "license": "MIT",
+    "keywords": [
+        "jquery",
+        "dklab",
+        "realplexor"
+    ],
+    "dependencies": {
+        "jquery": ">=1.7"
+    },
+    "authors": [
+	"DmitryKoterov <dmitry.koterov@gmail.com>",
+        "Inpassor <inpassor@yandex.com>"
+    ]
+}
