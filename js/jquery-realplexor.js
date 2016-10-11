@@ -7,51 +7,78 @@
  * @author Inpassor <inpassor@yandex.com>
  * @link https://github.com/Inpassor/yii2-realplexor
  *
- * @version 0.1.0 (2016.10.10)
+ * @version 0.1.1 (2016.10.11)
  */
 
 ;(function ($, window, document, undefined) {
 
-    $.Realplexor = function (params) {
-        $.extend(true, this, this.params, params || {});
-        this.host = document.location.host;
-        if (!this.constructor._registry) {
-            this.constructor._registry = {};
-        }
-        this._iframeId = "mpl" + (new Date().getTime());
-        this.constructor._registry[this._iframeId] = this;
+    var RealplexorRegistry = {};
 
-        if (!this.url.match(/^\w+:\/\/([^/]+)/)) {
+    $.Realplexor = function (params) {
+        if ($.isPlainObject(params)) {
+            return new Realplexor(params);
+        }
+        if (RealplexorRegistry[params]) {
+            return RealplexorRegistry[params];
+        }
+        throw 'Invalid parameters.';
+    };
+
+    $.Realplexor._iframeLoaded = function (id) {
+        var th = RealplexorRegistry[id];
+        setTimeout(function () {
+            var iframe = document.getElementById(id);
+            th._realplexor = iframe.contentWindow.Dklab_Realplexor_Loader;
+            if (th.needExecute) {
+                th.execute();
+            }
+        }, 50);
+    };
+
+    $.Realplexor._callAndReturnException = function (func, args) {
+        try {
+            func.apply(null, args);
+            return null;
+        } catch (e) {
+            return '' + e;
+        }
+    };
+
+    var Realplexor = function (params) {
+        $.extend(true, this, params || {});
+        this.host = document.location.host;
+        this.uid = params.uid || "mpl" + (new Date().getTime());
+        RealplexorRegistry[this.uid] = this;
+        if (!this.url.match(/^\/\/([^/]+)/)) {
             throw 'Dklab_Realplexor constructor argument must be fully-qualified URL, ' + this.url + ' given.';
         }
         var mHost = RegExp.$1;
         if (mHost != this.host && mHost.lastIndexOf('.' + this.host) != mHost.length - this.host.length - 1) {
             throw 'Due to the standard XMLHttpRequest security policy, hostname in URL passed to Dklab_Realplexor (' + mHost + ') must be equals to the current host (' + this.host + ') or be its direct sub-domain.';
         }
-
-        if (this.viaDocumentWrite) {
+        if (this.createIframe) {
             this._createIframe();
         }
-        document.domain = host;
+        document.domain = this.host;
         return this;
     };
 
-    $.Realplexor.prototype = {
+    Realplexor.prototype = {
         version: '1.32',
+        uid: null,
         url: '',
         host: '',
         namespace: '',
         _map: {},
         _realplexor: null,
         _login: null,
-        _iframeId: null,
         _iframeCreated: false,
         _needExecute: false,
         _executeTimer: null,
         _createIframe: function () {
             $('<iframe/>', {
-                id: this._iframeId,
-                onload: '$.Realplexor._iframeLoaded("' + this._iframeId + '")',
+                id: this.uid,
+                onload: '$.Realplexor._iframeLoaded("' + this.uid + '")',
                 src: this.url + '?identifier=IFRAME&HOST=' + this.host + '&version=' + this.version
             }).css({
                 position: 'absolute',
@@ -68,12 +95,16 @@
             return this;
         },
         setCursor: function (id, cursor) {
-            if (!this._map[id]) this._map[id] = {cursor: null, callbacks: []};
+            if (!this._map[id]) {
+                this._map[id] = {cursor: null, callbacks: []};
+            }
             this._map[id].cursor = cursor;
             return this;
         },
         subscribe: function (id, callback) {
-            if (!this._map[id]) this._map[id] = {cursor: null, callbacks: []};
+            if (!this._map[id]) {
+                this._map[id] = {cursor: null, callbacks: []};
+            }
             var chain = this._map[id].callbacks;
             for (var i = 0; i < chain.length; i++) {
                 if (chain[i] === callback) {
@@ -121,25 +152,5 @@
             return this;
         }
     };
-
-    $.Realplexor._iframeLoaded = function (id) {
-        var th = this._registry[id];
-        setTimeout(function () {
-            var iframe = document.getElementById(id);
-            th._realplexor = iframe.contentWindow.Dklab_Realplexor_Loader;
-            if (th.needExecute) {
-                th.execute();
-            }
-        }, 50);
-    };
-
-    $.Realplexor._callAndReturnException = function (func, args) {
-        try {
-            func.apply(null, args);
-            return null;
-        } catch (e) {
-            return '' + e;
-        }
-    }
 
 })(jQuery, window, document);

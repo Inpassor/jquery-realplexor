@@ -14,7 +14,7 @@
         "jquery": ">=1.7"
     },
     "authors": [
-	"DmitryKoterov <dmitry.koterov@gmail.com>",
+        "DmitryKoterov <dmitry.koterov@gmail.com>",
         "Inpassor <inpassor@yandex.com>"
     ]
 }
