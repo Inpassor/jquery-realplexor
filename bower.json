@@ -2,7 +2,7 @@
     "name": "jquery-realplexor",
     "description": "Realplexor client-side library",
     "main": [
-        "./js/jquery-realplexor.js"
+        "jquery-realplexor.js"
     ],
     "license": "MIT",
     "keywords": [
