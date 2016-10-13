@@ -44,11 +44,6 @@ bower install inpassor-jquery-realplexor
 composer require bower-asset/inpassor-jquery-realplexor
 ```
 
-After install include JavaScript files
-"inpassor-jquery-common/jquery-common.js" and
-"inpassor-jquery-realplexor/jquery-realplexor.js" into your HTML
-template.
-
 ## Usage
 
 To create Realplexor instance just call $.Realplexor(parameters): 
