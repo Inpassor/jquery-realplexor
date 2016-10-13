@@ -1,6 +1,6 @@
 {
     "name": "jquery-realplexor",
-    "description": "Realplexor client-side library",
+    "description": "Realplexor jQuery API",
     "main": [
         "jquery-realplexor.js"
     ],

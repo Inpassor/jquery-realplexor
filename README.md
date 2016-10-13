@@ -1,9 +1,9 @@
-Realplexor client-side library
-==============================
+Realplexor jQuery API
+=====================
 
 Author: Inpassor <inpassor@yandex.com>
 
-[GitHub repository](https://github.com/Inpassor/jquery-realplexor)
+GitHub repository: https://github.com/Inpassor/jquery-realplexor
 
 This library is the jQuery plugin that implements
 [Dklab_Realplexor](https://github.com/DmitryKoterov/dklab_realplexor)
