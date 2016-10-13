@@ -46,7 +46,7 @@ composer require bower-asset/inpassor-jquery-realplexor
 
 ## Usage
 
-To create Realplexor instance just call $.Realplexor(parameters): 
+To create Realplexor instance just call $.Realplexor(parameters) : 
 ```
 var realplexor = $.Realplexor({
     url: '//rpl.yourdomain.com'
@@ -60,11 +60,11 @@ Parameter | Description
 --- | ---
 **uid** | The unique string indentifier of the Realplexor instance.
 **url** | The URL of Dklab_Realplexor server.
-**namespace** | Default: ''. The namespace to use.
-**JS_WAIT_RECONNECT_DELAY** | Default: '0.01'. The reconnect delay. 
-**JS_WAIT_TIMEOUT** | Default: '300'. The timeout in seconds to wait Dklab_Realplexor responce.
-**JS_MAX_BOUNCES** | Default: '10'. The max bounces.
-**JS_WAIT_URI** | Default: '300'. What URI is used to access realplexor.
+**namespace** | **Default: ""** . The namespace to use.
+**JS_WAIT_RECONNECT_DELAY** | **Default: 0.01** . The reconnect delay. 
+**JS_WAIT_TIMEOUT** | **Default: 300** . The timeout in seconds to wait Dklab_Realplexor responce.
+**JS_MAX_BOUNCES** | **Default: 10** . The max bounces.
+**JS_WAIT_URI** | **Default: 300** . What URI is used to access realplexor.
 
 If the parameter **uid** is given, you can call the corresponding
 Realplexor instance later by such way:
