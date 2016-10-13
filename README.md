@@ -69,7 +69,7 @@ Parameter | Description
 If the parameter **uid** is given, you can call the corresponding
 Realplexor instance later by such way:
 ```
-var realplexor = $.Realplexor('uid');
+var realplexor = $.Realplexor('myUID');
 ```
 
 Once created Realplexor instance you can call its methods to work with
@@ -77,18 +77,22 @@ Dklab_Realplexor server channels:
 
 Method | Description
 --- | ---
-**setCursor** | Usage: setCursor(id, cursor). Set a cursor to a channel.
-**subscribe** | Usage: subscribe(id[, callback]). Subscribe a callback to a channel.
-**unsubscribe** | Usage: unsubscribe(id[, callback]). Unsubscribe a callback from a channel. If parameter **callback** is not given, all the callbacks will be unsubscribed from a channel.
-**execute** | Usage: execute(). This method sould be called after all the subscribe / unsubscribe calls.
+**setCursor** | **setCursor(id, cursor)** . Set a cursor to a channel.
+**subscribe** | **subscribe(id[, callback])** . Subscribe a callback to a channel.
+**unsubscribe** | **unsubscribe(id[, callback])** . Unsubscribe a callback from a channel. If parameter **callback** is not given, all the callbacks will be unsubscribed from a channel.
+**execute** | **execute()** . This method should be called after all the subscribe / unsubscribe calls.
 
-The callback declaration should be as follows:
+The **id** of a channel is alpha-numeric string.
+
+The **cursor** is the monotonically increasing sequence.
+
+The **callback** declaration should be as follows:
 ```
 someFunction(data, id, cursor) {
     ...
 }
 ```
-When Dklab_Realplexor sends data to a channel, the callback will be
+When Dklab_Realplexor sends data to a channel, the **callback** will be
 called with these parameters: 
 
 Parameter | Description
