@@ -2,12 +2,12 @@
  * jquery-realplexor.js
  *
  * @author DmitryKoterov <dmitry.koterov@gmail.com>
- * @link https://github.com/DmitryKoterov/dklab_realplexor/blob/master/dklab_realplexor.js
+ * @link https://github.com/DmitryKoterov/dklab_realplexor
  *
  * @author Inpassor <inpassor@yandex.com>
  * @link https://github.com/Inpassor/yii2-realplexor
  *
- * @version 0.1.2 (2016.10.13)
+ * @version 0.1.3 (2016.10.13)
  */
 
 ;(function ($, window, document, undefined) {
@@ -16,10 +16,10 @@
         if ($.isPlainObject(params)) {
             return new Realplexor(params);
         }
-        if (this.instances[params]) {
-            return this.instances[params];
+        if ($.Realplexor.instances[params]) {
+            return $.Realplexor.instances[params];
         }
-        throw 'Invalid parameters.';
+        throw 'Realplexor instance "' + params + '" not found.';
     };
     $.Realplexor.instances = {};
 
@@ -29,15 +29,19 @@
             namespace: '',
             JS_WAIT_RECONNECT_DELAY: 0.01,
             JS_WAIT_TIMEOUT: 300,
-            JS_MAX_BOUNCES: 10
+            JS_MAX_BOUNCES: 10,
+            JS_WAIT_URI: '/'
         }, params || {}, {
             _map: {},
             _bounceCount: 0
         });
         if (!this.url.match(/^\/\/([^/]+)/)) {
-            throw 'Dklab_Realplexor constructor argument must be fully-qualified URL, "' + this.url + '" given.';
+            throw 'Realplexor constructor argument must be fully-qualified URL, "' + this.url + '" given.';
         }
-        return this;
+        if (!this.uid) {
+            this.uid = $.getRandomString();
+        }
+        return $.Realplexor.instances[this.uid] = this;
     };
 
     Realplexor.prototype = {
@@ -68,7 +72,7 @@
             return this;
         },
         execute: function () {
-            this._loopFunc();
+            this._loop();
             return this;
         },
         _getMapItem: function (id) {
@@ -80,7 +84,7 @@
             }
             return this._map[id];
         },
-        _makeRequestId: function() {
+        _makeRequestId: function () {
             var parts = [];
             for (var id in this._map) {
                 if (!this._map.hasOwnProperty(id)) {
@@ -94,7 +98,7 @@
             }
             return parts.join(',');
         },
-        _processDataPart: function(part) {
+        _processDataPart: function (part) {
             if (!part.ids || !part.data) {
                 return;
             }
@@ -119,18 +123,18 @@
             if (!$.isArray(data)) {
                 return;
             }
-            for (var i = 0 , l = data.length; i < l; i++) {
+            for (var i = 0, l = data.length; i < l; i++) {
                 this._processDataPart(data[i]);
             }
         },
-        _loopFunc: function() {
+        _loop: function () {
             var requestId = this._makeRequestId();
             if (!requestId.length) {
                 return;
             }
             var self = this,
                 idParam = 'identifier=' + requestId,
-                url = this.url + '/',
+                url = this.url + this.JS_WAIT_URI,
                 postData = null;
             this._prevReqTime = new Date().getTime();
             if (idParam.length < 1700) {
@@ -140,9 +144,9 @@
             }
             $.ajax(url, {
                 dataType: 'json',
-                type: postData? 'POST' : 'GET',
+                type: postData ? 'POST' : 'GET',
                 data: postData
-            }).always(function(data, textStatus){
+            }).always(function (data, textStatus) {
                 var nextQueryDelay = Math.round(self.JS_WAIT_RECONNECT_DELAY * 1000);
                 if (textStatus === 'success') {
                     self._processData(data);
@@ -161,8 +165,8 @@
                         nextQueryDelay = 60000;
                     }
                 }
-                window.setTimeout(function() {
-                    self._loopFunc();
+                window.setTimeout(function () {
+                    self._loop();
                 }, nextQueryDelay);
             });
         }
