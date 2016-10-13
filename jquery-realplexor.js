@@ -7,7 +7,7 @@
  * @author Inpassor <inpassor@yandex.com>
  * @link https://github.com/Inpassor/yii2-realplexor
  *
- * @version 0.1.3 (2016.10.13)
+ * @version 0.1.4 (2016.10.13)
  */
 
 ;(function ($, window, document, undefined) {
