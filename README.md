@@ -14,7 +14,7 @@ browser connections.
 
 This library acts similar to native Dklab_Realplexor JavaScript API,
 but have one difference: IFRAME is not used. So all the Dklab_Realplexor
-Server config parameters related to JavaScript should be declared on
+server config parameters related to JavaScript should be declared on
 client-side.
 It is made to eliminate all the unnecessary dancing with a tambourine
 for just getting these parameters, and no other targets.
@@ -22,12 +22,15 @@ for just getting these parameters, and no other targets.
 Also all the deprecated "work-arounds" are removed and native
 JavaScript functions replaced by jQuery's ones.
 
+This library depends on Inpassor's
+[Common functions library](https://github.com/Inpassor/jquery-common).
+
 ## Installation
 
 Note that here is information about install this library, not
-Dklab_Realplexor Server itself. To install Dklab_Realplexor Server
+Dklab_Realplexor server itself. To install Dklab_Realplexor server
 follow the instructions on
-[Dklab_Realplexor Server GitHub repository](https://github.com/DmitryKoterov/dklab_realplexor).
+[Dklab_Realplexor GitHub repository](https://github.com/DmitryKoterov/dklab_realplexor).
 
 ### Using bower:
 
@@ -41,6 +44,11 @@ bower install inpassor-jquery-realplexor
 composer require bower-asset/inpassor-jquery-realplexor
 ```
 
+After install include JavaScript files
+"inpassor-jquery-common/jquery-common.js" and
+"inpassor-jquery-realplexor/jquery-realplexor.js" into your HTML
+template.
+
 ## Usage
 
 To create Realplexor instance just call $.Realplexor(parameters): 
@@ -49,14 +57,15 @@ var realplexor = $.Realplexor({
     url: '//rpl.yourdomain.com'
 });
 ```
+Note that **url** must be valid URL, that jQuery.ajax function accept. 
 
 The list of available parameters:
 
 Parameter | Description
 --- | ---
 **uid** | The unique string indentifier of the Realplexor instance.
-**url** | The URL of Dklab_Realplexor Server.
-**namespace** | Default: ''. The namespace that will be used by Dklab_Realplexor Server.
+**url** | The URL of Dklab_Realplexor server.
+**namespace** | Default: ''. The namespace to use.
 **JS_WAIT_RECONNECT_DELAY** | Default: '0.01'. The reconnect delay. 
 **JS_WAIT_TIMEOUT** | Default: '300'. The timeout in seconds to wait Dklab_Realplexor responce.
 **JS_MAX_BOUNCES** | Default: '10'. The max bounces.
@@ -69,7 +78,7 @@ var realplexor = $.Realplexor('uid');
 ```
 
 Once created Realplexor instance you can call its methods to work with
-Dklab_Realplexor Server channels: 
+Dklab_Realplexor server channels: 
 
 Method | Description
 --- | ---

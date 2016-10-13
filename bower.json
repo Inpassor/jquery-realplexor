@@ -15,7 +15,6 @@
         "inpassor-jquery-common": "*"
     },
     "authors": [
-        "DmitryKoterov <dmitry.koterov@gmail.com>",
         "Inpassor <inpassor@yandex.com>"
     ]
 }

@@ -1,13 +1,10 @@
 /**
  * jquery-realplexor.js
  *
- * @author DmitryKoterov <dmitry.koterov@gmail.com>
- * @link https://github.com/DmitryKoterov/dklab_realplexor
- *
  * @author Inpassor <inpassor@yandex.com>
  * @link https://github.com/Inpassor/yii2-realplexor
  *
- * @version 0.1.4 (2016.10.13)
+ * @version 0.1.5 (2016.10.13)
  */
 
 ;(function ($, window, document, undefined) {
@@ -35,9 +32,6 @@
             _map: {},
             _bounceCount: 0
         });
-        if (!this.url.match(/^\/\/([^/]+)/)) {
-            throw 'Realplexor constructor argument must be fully-qualified URL, "' + this.url + '" given.';
-        }
         if (!this.uid) {
             this.uid = $.getRandomString();
         }
