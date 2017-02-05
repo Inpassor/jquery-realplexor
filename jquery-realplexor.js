@@ -4,7 +4,7 @@
  * @author Inpassor <inpassor@yandex.com>
  * @link https://github.com/Inpassor/yii2-realplexor
  *
- * @version 0.2.0 (2017.02.05)
+ * @version 0.2.1 (2017.02.05)
  */
 
 ;(function ($, window, document, undefined) {
@@ -66,7 +66,10 @@
             return this;
         },
         execute: function () {
-            this._stop = true;
+            if (this._t) {
+                window.clearTimeout(this._t);
+                this._t = null;
+            }
             this._loop();
             return this;
         },
@@ -123,7 +126,6 @@
             }
         },
         _loop: function () {
-            this._stop = false;
             var requestId = this._makeRequestId();
             if (!requestId.length) {
                 return;
@@ -161,10 +163,7 @@
                         nextQueryDelay = 60000;
                     }
                 }
-                window.setTimeout(function () {
-                    if (self._stop) {
-                        return;
-                    }
+                self._t = window.setTimeout(function () {
                     self._loop();
                 }, nextQueryDelay);
             });
