@@ -4,7 +4,7 @@
  * @author Inpassor <inpassor@yandex.com>
  * @link https://github.com/Inpassor/yii2-realplexor
  *
- * @version 0.2.1 (2017.02.05)
+ * @version 0.2.2 (2017.02.06)
  */
 
 ;(function ($, window, document, undefined) {
@@ -40,28 +40,29 @@
 
     Realplexor.prototype = {
         setCursor: function (id, cursor) {
-            this._getMapItem(id).cursor = cursor;
+            this._checkMapItem(id);
+            this._map[id].cursor = cursor;
             return this;
         },
         subscribe: function (id, callback) {
-            var chain = this._getMapItem(id).callbacks;
-            if (chain.indexOf(callback) !== -1) {
+            this._checkMapItem(id);
+            if (this._map[id].callbacks.indexOf(callback) !== -1) {
                 return this;
             }
             if ($.isFunction(callback)) {
-                chain.push(callback);
+                this._map[id].callbacks.push(callback);
             }
             return this;
         },
         unsubscribe: function (id, callback) {
-            var chain = this._getMapItem(id).callbacks;
+            this._checkMapItem(id);
             if ($.isUndefined(callback)) {
-                chain = [];
+                this._map[id].callbacks = [];
                 return this;
             }
-            var i = chain.indexOf(callback);
+            var i = this._map[id].callbacks.indexOf(callback);
             if (i !== -1) {
-                chain.splice(i, 1);
+                this._map[id].callbacks.splice(i, 1);
             }
             return this;
         },
@@ -73,14 +74,13 @@
             this._loop();
             return this;
         },
-        _getMapItem: function (id) {
+        _checkMapItem: function (id) {
             if (!this._map[id]) {
                 this._map[id] = {
                     cursor: null,
                     callbacks: []
                 };
             }
-            return this._map[id];
         },
         _makeRequestId: function () {
             var parts = [];
@@ -110,10 +110,10 @@
                         id = id.substring(this.namespace.length);
                     }
                 }
-                var item = this._getMapItem(id);
-                item.cursor = cursor;
-                for (var i = 0, l = item.callbacks.length; i < l; i++) {
-                    item.callbacks[i].call(this, part.data, id, cursor);
+                this._checkMapItem(id);
+                this._map[id].cursor = cursor;
+                for (var i = 0, l = this._map[id].callbacks.length; i < l; i++) {
+                    this._map[id].callbacks[i].call(this, part.data, id, cursor);
                 }
             }
         },
