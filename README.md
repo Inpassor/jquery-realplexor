@@ -58,7 +58,7 @@ Parameter | Default | Description
 **uid** | random string | The unique string indentifier of the Realplexor instance.
 **url** | "" |The URL of Dklab_Realplexor server.
 **namespace** | "" | The namespace to use.
-**JS_WAIT_RECONNECT_DELAY** | 0.01 | The reconnect delay. 
+**JS_WAIT_RECONNECT_DELAY** | 0.1 | The reconnect delay. 
 **JS_WAIT_TIMEOUT** | 300 | The timeout in seconds to wait Dklab_Realplexor responce.
 **JS_WAIT_URI** | "/" | What URI is used to access realplexor.
 

@@ -5,7 +5,7 @@
  * @link https://github.com/Inpassor/jquery-realplexor
  *
  * @license MIT
- * @version 0.3.0 (2017.02.07)
+ * @version 0.3.1 (2017.02.07)
  */
 
 ;(function ($, window, document, undefined) {
@@ -20,18 +20,18 @@
         } else {
             uid = params;
             params = {
-                uid
+                uid: uid
             }
         }
         return $.Realplexor.instances[uid] ? $.Realplexor.instances[uid] : new Realplexor(params);
     };
     $.Realplexor.instances = {};
 
-    const Realplexor = function (params) {
+    var Realplexor = function (params) {
         $.extend(true, this, {
             url: '',
             namespace: '',
-            JS_WAIT_RECONNECT_DELAY: 0.01,
+            JS_WAIT_RECONNECT_DELAY: 0.1,
             JS_WAIT_TIMEOUT: 300,
             JS_WAIT_URI: '/'
         }, params || {}, {
@@ -74,9 +74,6 @@
             return this;
         },
         execute: function () {
-            if (this._t) {
-                window.clearTimeout(this._t);
-            }
             if (this.jqXHR) {
                 this.jqXHR.abort();
             }
@@ -138,9 +135,6 @@
             var self = this,
                 requestId = this._makeRequestId();
             if (!requestId.length) {
-                this._t = window.setTimeout(function () {
-                    self._loop();
-                }, this.reconnectTimeout);
                 return;
             }
             var idParam = 'identifier=' + requestId,
@@ -153,12 +147,15 @@
             }
             var timeout = this.stdTimeout;
             this.jqXHR = $.ajax({
-                url,
+                url: url,
                 dataType: 'json',
                 type: postData ? 'POST' : 'GET',
                 data: postData,
                 timeout: timeout
             }).always(function (data, textStatus) {
+                if (textStatus === 'abort') {
+                    return;
+                }
                 if (textStatus === 'success') {
                     timeout = self.stdTimeout;
                     self._processData(data);
