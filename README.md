@@ -22,9 +22,6 @@ for just getting these parameters, and no other targets.
 Also all the deprecated "work-arounds" are removed and native
 JavaScript functions replaced by jQuery's ones.
 
-This library depends on Inpassor's
-[Common functions library](https://github.com/Inpassor/jquery-common).
-
 ## Installation
 
 Note that here is information about install this library, not
@@ -56,15 +53,14 @@ Note that **url** must be valid URL, that jQuery.ajax function accept.
 
 The list of available parameters:
 
-Parameter | Description
---- | ---
-**uid** | The unique string indentifier of the Realplexor instance.
-**url** | The URL of Dklab_Realplexor server.
-**namespace** | **Default: ""** . The namespace to use.
-**JS_WAIT_RECONNECT_DELAY** | **Default: 0.01** . The reconnect delay. 
-**JS_WAIT_TIMEOUT** | **Default: 300** . The timeout in seconds to wait Dklab_Realplexor responce.
-**JS_MAX_BOUNCES** | **Default: 10** . The max bounces.
-**JS_WAIT_URI** | **Default: 300** . What URI is used to access realplexor.
+Parameter | Default | Description
+--- | --- | ---
+**uid** | random string | The unique string indentifier of the Realplexor instance.
+**url** | "" |The URL of Dklab_Realplexor server.
+**namespace** | "" | The namespace to use.
+**JS_WAIT_RECONNECT_DELAY** | 0.01 | The reconnect delay. 
+**JS_WAIT_TIMEOUT** | 300 | The timeout in seconds to wait Dklab_Realplexor responce.
+**JS_WAIT_URI** | "/" | What URI is used to access realplexor.
 
 If the parameter **uid** is given, you can call the corresponding
 Realplexor instance later by such way:

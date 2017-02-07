@@ -11,8 +11,7 @@
         "realplexor"
     ],
     "dependencies": {
-        "jquery": ">=1.7",
-        "inpassor-jquery-common": "*"
+        "jquery": ">=1.7"
     },
     "authors": [
         "Inpassor <inpassor@yandex.com>"

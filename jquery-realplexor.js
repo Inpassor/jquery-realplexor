@@ -2,39 +2,46 @@
  * jquery-realplexor.js
  *
  * @author Inpassor <inpassor@yandex.com>
- * @link https://github.com/Inpassor/yii2-realplexor
+ * @link https://github.com/Inpassor/jquery-realplexor
  *
- * @version 0.2.2 (2017.02.06)
+ * @license MIT
+ * @version 0.3.0 (2017.02.07)
  */
 
 ;(function ($, window, document, undefined) {
 
     $.Realplexor = function (params) {
+        var uid = null;
         if ($.isPlainObject(params)) {
-            return new Realplexor(params);
+            if (!params.uid) {
+                return new Realplexor(params);
+            }
+            uid = params.uid;
+        } else {
+            uid = params;
+            params = {
+                uid
+            }
         }
-        if ($.Realplexor.instances[params]) {
-            return $.Realplexor.instances[params];
-        }
-        throw 'Realplexor instance "' + params + '" not found.';
+        return $.Realplexor.instances[uid] ? $.Realplexor.instances[uid] : new Realplexor(params);
     };
     $.Realplexor.instances = {};
 
-    var Realplexor = function (params) {
+    const Realplexor = function (params) {
         $.extend(true, this, {
             url: '',
             namespace: '',
             JS_WAIT_RECONNECT_DELAY: 0.01,
             JS_WAIT_TIMEOUT: 300,
-            JS_MAX_BOUNCES: 10,
             JS_WAIT_URI: '/'
         }, params || {}, {
-            _map: {},
-            _bounceCount: 0
+            _map: {}
         });
         if (!this.uid) {
-            this.uid = $.getRandomString();
+            this.uid = Math.random().toString(36).slice(2);
         }
+        this.stdTimeout = this.JS_WAIT_TIMEOUT * 1000;
+        this.reconnectTimeout = this.JS_WAIT_RECONNECT_DELAY * 1000;
         return $.Realplexor.instances[this.uid] = this;
     };
 
@@ -69,7 +76,9 @@
         execute: function () {
             if (this._t) {
                 window.clearTimeout(this._t);
-                this._t = null;
+            }
+            if (this.jqXHR) {
+                this.jqXHR.abort();
             }
             this._loop();
             return this;
@@ -112,13 +121,13 @@
                 }
                 this._checkMapItem(id);
                 this._map[id].cursor = cursor;
-                for (var i = 0, l = this._map[id].callbacks.length; i < l; i++) {
+                for (var i = 0; i < this._map[id].callbacks.length; i++) {
                     this._map[id].callbacks[i].call(this, part.data, id, cursor);
                 }
             }
         },
         _processData: function (data) {
-            if (!$.isArray(data)) {
+            if (!(data instanceof Array)) {
                 return;
             }
             for (var i = 0, l = data.length; i < l; i++) {
@@ -126,46 +135,37 @@
             }
         },
         _loop: function () {
-            var requestId = this._makeRequestId();
+            var self = this,
+                requestId = this._makeRequestId();
             if (!requestId.length) {
+                this._t = window.setTimeout(function () {
+                    self._loop();
+                }, this.reconnectTimeout);
                 return;
             }
-            var self = this,
-                idParam = 'identifier=' + requestId,
+            var idParam = 'identifier=' + requestId,
                 url = this.url + this.JS_WAIT_URI,
                 postData = null;
-            this._prevReqTime = new Date().getTime();
             if (idParam.length < 1700) {
-                url += '?' + idParam + '&ncrnd=' + this._prevReqTime;
+                url += '?' + idParam + '&ncrnd=' + new Date().getTime();
             } else {
                 postData = idParam + "\n";
             }
-            $.ajax(url, {
+            var timeout = this.stdTimeout;
+            this.jqXHR = $.ajax({
+                url,
                 dataType: 'json',
                 type: postData ? 'POST' : 'GET',
-                data: postData
+                data: postData,
+                timeout: timeout
             }).always(function (data, textStatus) {
-                var nextQueryDelay = Math.round(self.JS_WAIT_RECONNECT_DELAY * 1000);
                 if (textStatus === 'success') {
+                    timeout = self.stdTimeout;
                     self._processData(data);
-                    self._bounceCount = 0;
                 } else {
-                    var t = new Date().getTime();
-                    if (t - self._prevReqTime < self.JS_WAIT_TIMEOUT / 2 * 1000) {
-                        self._bounceCount++;
-                    }
-                    self._prevReqTime = t;
+                    timeout = self.reconnectTimeout;
                 }
-                if (self._bounceCount > self.JS_MAX_BOUNCES) {
-                    var progressive = self._bounceCount - self.JS_MAX_BOUNCES + 2;
-                    nextQueryDelay = 1000 + 500 * progressive * progressive;
-                    if (nextQueryDelay > 60000) {
-                        nextQueryDelay = 60000;
-                    }
-                }
-                self._t = window.setTimeout(function () {
-                    self._loop();
-                }, nextQueryDelay);
+                self._loop();
             });
         }
     };
